@@ -3,24 +3,36 @@ namespace Laravolt\Comma\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Laravolt\Comma\Models\Scopes\VisibleScope;
 use Laravolt\Comma\Models\Traits\Taggable;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
-    use HasSlug, Taggable;
+    use HasSlug, Taggable, HasMediaTrait;
 
     protected $table = 'cms_posts';
 
     protected $with = ['category', 'tags', 'author'];
+
+    protected $dates = ['published_at'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new VisibleScope);
+    }
 
     /**
      * Get the options for generating the slug.
      */
     public function getSlugOptions(): SlugOptions
     {
-        return SlugOptions::create()->generateSlugsFrom('title')->saveSlugsTo('slug');
+        return SlugOptions::create()->generateSlugsFrom('title')->saveSlugsTo('slug')->doNotGenerateSlugsOnCreate();
     }
 
     public function author()
@@ -54,7 +66,7 @@ class Post extends Model
 
     public function publish()
     {
-        if ($this->status === 'draft') {
+        if (!$this->published_at) {
             $this->published_at = new Carbon();
         }
         $this->status = 'published';
@@ -69,4 +81,45 @@ class Post extends Model
         return $this->save();
     }
 
+    public function saveAsDraft()
+    {
+        $this->status = 'draft';
+
+        return $this->save();
+    }
+
+    public function isSession()
+    {
+        return $this->status === 'session';
+    }
+
+    public function isDraft()
+    {
+        return $this->status === 'draft';
+    }
+
+    public function isPublished()
+    {
+        return $this->status === 'published';
+    }
+
+    public function isUnpublished()
+    {
+        return $this->status === 'unpublished';
+    }
+
+    public function displayDate()
+    {
+        switch ($this->status) {
+            case 'draft':
+                return 'Last edited '.$this->updated_at->diffForHumans();
+                break;
+            case 'published':
+                return 'Published '.$this->published_at->diffForHumans();
+                break;
+            case 'unpublished':
+                return 'Last edited '.$this->updated_at->diffForHumans();
+                break;
+        }
+    }
 }
