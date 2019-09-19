@@ -99,9 +99,6 @@ class ServiceProvider extends BaseServiceProvider
             $menu->add(trans('comma::menu.posts'), route('comma::posts.index'))
                  ->active('cms/posts')
                  ->data('icon', 'newspaper outline');
-            $menu->add(trans('comma::menu.categories'), route('comma::categories.index'))
-                 ->active('cms/categories')
-                 ->data('icon', 'folder outline');
         }
     }
 

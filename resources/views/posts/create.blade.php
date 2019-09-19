@@ -1,29 +1,31 @@
-@extends(config('laravolt.comma.view.layout'))
+@extends(
+    config('laravolt.comma.view.layout'),
+    [
+        '__page' => [
+            'title' => __('comma::post.action.create'),
+            'actions' => [
+                [
+                    'label' => __('Kembali'),
+                    'class' => '',
+                    'icon' => 'icon angle left',
+                    'url' => route('comma::posts.index')
+                ],
+            ]
+        ],
+    ]
+)
 
 @section('content')
-
-    <h2 class="ui header">@lang('comma::post.header.create')</h2>
-    <div class="p-y-1">
-        {!! SemanticForm::open()->route('comma::posts.store') !!}
-        {!! SemanticForm::text('title')->label(trans('comma::post.attributes.title')) !!}
-        {!! SemanticForm::select('category_id', $categories)->label(trans('comma::post.attributes.category')) !!}
-
-        {!! SemanticForm::textarea('content')->label(trans('comma::post.attributes.content'))->id('postContent') !!}
-
-        {!! SemanticForm::selectMultiple('tags[]', $tags)->placeholder('')->label(trans('comma::post.attributes.tags')) !!}
-        {!! SemanticForm::submit(trans('comma::post.action.submit'))->addClass('primary') !!}
-        {!! SemanticForm::close() !!}
-    </div>
+    {!! form()->open()->route('comma::posts.store') !!}
+    {!! form()->text('title')->label(trans('comma::post.attributes.title'))->required() !!}
+    {!! form()->textarea('content')->label(trans('comma::post.attributes.content'))->required() !!}
+    {!! form()->selectMultiple('tags[]', $tags)->placeholder('')->label(trans('comma::post.attributes.tags')) !!}
+    {!! form()->action(
+        form()->submit(trans('comma::post.action.save'))->addClass('primary'),
+        form()->link(trans('comma::post.action.cancel'), route('comma::posts.index'))
+    ) !!}
+    {!! form()->close() !!}
 @endsection
-
-@push('head')
-<link rel="stylesheet" href="{{ asset('lib/redactor/redactor.css') }}">
-<style>
-    body {
-        overflow-x: initial;
-    }
-</style>
-@endpush
 
 @push('body')
 <script src="{{ asset('lib/redactor/redactor.js') }}"></script>

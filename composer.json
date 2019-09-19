@@ -18,17 +18,20 @@
         }
     ],
     "require": {
-        "php" : "^7.1.3",
-        "illuminate/database": "5.6.*",
-        "illuminate/support": "5.6.*",
-        "spatie/laravel-sluggable": "^2.1.3",
-        "spatie/laravel-medialibrary": "^7.0.0"
+        "php": "^7.2",
+        "illuminate/database": "^5.6|^6.0",
+        "illuminate/support": "^5.6|^6.0",
+        "spatie/laravel-sluggable": "^2.2",
+        "spatie/laravel-medialibrary": "^7.0.0",
+        "spatie/laravel-translatable": "^4.2",
+        "spatie/laravel-tags": "^2.5",
+        "spatie/laravel-schemaless-attributes": "^1.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.0",
-        "orchestra/testbench": "~3.2.0|~3.3.0|~3.4.0@dev",
-        "orchestra/database": "~3.2.0|~3.3.0|~3.4.0@dev",
-        "mockery/mockery": "~0.9.4"
+        "phpunit/phpunit": "^8.0",
+        "orchestra/testbench": "^4.0",
+        "orchestra/database": "^4.0",
+        "mockery/mockery": "^1.2"
     },
     "suggest": {
         "laravel/scout": "Required to utilize Searchable Post"
