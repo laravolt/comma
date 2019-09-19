@@ -7,7 +7,6 @@ use Illuminate\Routing\Controller;
 use Laravolt\Comma\Exceptions\CmsException;
 use Laravolt\Comma\Http\Requests\StorePost;
 use Laravolt\Comma\Http\Requests\UpdatePost;
-use Laravolt\Comma\Models\Scopes\VisibleScope;
 
 class PostController extends Controller
 {
@@ -65,28 +64,8 @@ class PostController extends Controller
                     $request->get('tags')
                 );
 
-            if ($request->hasFile('featured_image')) {
-                $post->clearMediaCollection('featured');
-                $post->addMediaFromRequest('featured_image')->toMediaCollection('featured');
-            }
-
-            switch ($request->get('action')) {
-                case 'publish':
-                    $post->publish();
-                    break;
-                case 'unpublish':
-                    $post->unpublish();
-                    break;
-                case 'draft':
-                    $post->saveAsDraft();
-                    break;
-                case 'save':
-                default:
-                    break;
-            }
-
             return redirect()->back()->withSuccess(trans('comma::post.message.update_success'));
-        } catch (\Exception $e) {
+        } catch (CmsException $e) {
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
     }
@@ -94,10 +73,10 @@ class PostController extends Controller
     public function destroy($id)
     {
         try {
-            app('laravolt.comma.models.post')->find($id)->delete();
+            app('laravolt.comma.models.post')->findOrFail($id)->delete();
 
             return redirect()->route('comma::posts.index')->withSuccess(trans('comma::post.message.delete_success'));
-        } catch (\Exception $e) {
+        } catch (CmsException $e) {
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
     }
