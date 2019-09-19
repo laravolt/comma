@@ -45,25 +45,23 @@ class PostController extends Controller
 
     public function edit($id)
     {
-        $post = app('laravolt.comma.models.post')->withoutGlobalScope(VisibleScope::class)->findOrFail($id);
-        $tags = app('laravolt.comma.models.tag')->all()->pluck('name', 'name');
-        $featuredImageUrl = $post->featuredImageUrl();
+        $post = app('laravolt.comma.models.post')->findOrFail($id);
+        $tags = app('laravolt.comma.models.tag')->pluck('name', 'name');
 
-        return view('comma::posts.edit', compact('post', 'tags', 'featuredImageUrl'));
+        return view('comma::posts.edit', compact('post', 'tags'));
     }
 
     public function update(UpdatePost $request, $id)
     {
-        $post = app('laravolt.comma.models.post')->withoutGlobalScope(VisibleScope::class)->findOrFail($id);
+        $post = app('laravolt.comma.models.post')->findOrFail($id);
 
         try {
             $post = app('laravolt.comma')
-                ->updatePost(
+                ->update(
                     $post,
-                    auth()->user(),
                     $request->get('title'),
                     $request->get('content'),
-                    $request->get('category_id'),
+                    auth()->user(),
                     $request->get('tags')
                 );
 

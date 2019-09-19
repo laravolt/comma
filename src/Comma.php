@@ -28,7 +28,7 @@ class Comma
         });
     }
 
-    public function updatePost(Post $post, $title, $content, Model $author, $type = null, $tags = null)
+    public function update(Post $post, $title, $content, Model $author, $tags = null)
     {
         return DB::transaction(function () use ($post, $author, $title, $content, $tags) {
             $post->title = $title;

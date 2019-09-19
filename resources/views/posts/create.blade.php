@@ -2,7 +2,7 @@
     config('laravolt.comma.view.layout'),
     [
         '__page' => [
-            'title' => __('comma::post.action.create'),
+            'title' => __('comma::post.header.create'),
             'actions' => [
                 [
                     'label' => __('Kembali'),

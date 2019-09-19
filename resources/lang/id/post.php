@@ -5,7 +5,7 @@ return [
         'index' => 'Post',
         'table' => 'Daftar Post',
         'create' => 'Tulis Konten Baru',
-        'edit' => 'Tulis Konten',
+        'edit' => 'Edit Konten',
     ],
     'action' => [
         'create' => 'Buat Postingan Baru',
