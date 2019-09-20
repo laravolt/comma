@@ -10,44 +10,59 @@ use Laravolt\Comma\Http\Requests\UpdatePost;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, string $collection)
     {
-        $posts = app('laravolt.comma.models.post')->autoSort()->latest()->search($request->get('search'))->paginate();
+        $this->validateCollection($collection);
 
-        return view('comma::posts.index', compact('posts'));
+        $posts = app('laravolt.comma.models.post')
+            ->fromCollection($collection)
+            ->autoSort()
+            ->latest()
+            ->search($request->get('search'))
+            ->paginate();
+
+        return view('comma::posts.index', compact('posts', 'collection'));
     }
 
-    public function create()
+    public function create(string $collection)
     {
+        $this->validateCollection($collection);
+
         $tags = app('laravolt.comma.models.tag')->all()->pluck('name', 'name');
 
-        return view('comma::posts.create', compact('tags'));
+        return view('comma::posts.create', compact('tags', 'collection'));
     }
 
-    public function store(StorePost $request)
+    public function store(StorePost $request, string $collection)
     {
+        $this->validateCollection($collection);
+
         try {
             $post = app('laravolt.comma')
                 ->create(
                     $request->get('title'),
                     $request->get('content'),
                     auth()->user(),
-                    'post',
+                    config("laravolt.comma.collections.$collection.filters.type"),
                     $request->get('tags')
                 );
 
-            return redirect()->route('comma::posts.index')->withSuccess(trans('comma::post.message.create_success'));
+            return redirect()
+                ->route('comma::posts.index', $collection)
+                ->withSuccess(trans('comma::post.message.create_success'));
         } catch (CmsException $e) {
             return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
     }
 
-    public function edit($id)
+    public function edit(string $collection, $id)
     {
+        $this->validateCollection($collection);
+
         $post = app('laravolt.comma.models.post')->findOrFail($id);
         $tags = app('laravolt.comma.models.tag')->pluck('name', 'name');
 
-        return view('comma::posts.edit', compact('post', 'tags'));
+        return view('comma::posts.edit', compact('post', 'tags', 'collection'));
     }
 
     public function update(UpdatePost $request, $id)
@@ -75,9 +90,16 @@ class PostController extends Controller
         try {
             app('laravolt.comma.models.post')->findOrFail($id)->delete();
 
-            return redirect()->route('comma::posts.index')->withSuccess(trans('comma::post.message.delete_success'));
+            return redirect()->back()->withSuccess(trans('comma::post.message.delete_success'));
         } catch (CmsException $e) {
             return redirect()->back()->withErrors($e->getMessage())->withInput();
+        }
+    }
+
+    protected function validateCollection(string $collection)
+    {
+        if (!config()->has("laravolt.comma.collections.$collection")) {
+            abort(404);
         }
     }
 }

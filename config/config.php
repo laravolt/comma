@@ -20,4 +20,13 @@ return [
         'tag' => \Laravolt\Comma\Models\Tag::class,
     ],
     'default_type' => 'post',
+    'collections' => [
+        'default' => [
+            'label' => 'All Posts',
+            'icon' => 'newspaper outline',
+            'filters' => [
+                'type' => 'default',
+            ],
+        ],
+    ],
 ];

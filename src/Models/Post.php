@@ -3,7 +3,9 @@
 namespace Laravolt\Comma\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Laravolt\Comma\Models\Traits\Taggable;
 use Laravolt\Suitable\AutoSort;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
@@ -58,6 +60,16 @@ class Post extends Model implements HasMedia
                         );
                 }
             );
+        }
+    }
+
+    public function scopefromCollection(Builder $query, string $collection = null)
+    {
+        if ($collection) {
+            $collection = config("laravolt.comma.collections.$collection");
+            foreach (Arr::get($collection, 'filters', []) as $column => $value) {
+                $query->where($column, $value);
+            }
         }
     }
 

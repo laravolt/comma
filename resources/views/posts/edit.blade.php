@@ -8,7 +8,7 @@
                     'label' => __('Kembali'),
                     'class' => '',
                     'icon' => 'icon angle left',
-                    'url' => route('comma::posts.index')
+                    'url' => route('comma::posts.index', $collection)
                 ],
             ]
         ],
@@ -22,7 +22,7 @@
     {!! form()->redactor('content')->label(trans('comma::post.attributes.content'))->required() !!}
     {!! form()->action(
         form()->submit(trans('comma::post.action.save'))->addClass('primary'),
-        form()->link(trans('comma::post.action.cancel'), route('comma::posts.index'))
+        form()->link(trans('comma::post.action.cancel'), route('comma::posts.index', $collection))
     ) !!}
     {!! form()->close() !!}
 @endsection
