@@ -95,11 +95,13 @@ class ServiceProvider extends BaseServiceProvider
     protected function registerMenu()
     {
         if ($this->app->bound('laravolt.menu')) {
-            $menu = $this->app['laravolt.menu']->add('CMS');
+            $group = $this->app['laravolt.menu']->add('CMS');
             foreach (config('laravolt.comma.collections') as $key => $collection) {
-                $menu->add($collection['label'], route('comma::posts.index', ['collection' => $key]))
-                    ->active('cms/posts/'.$key)
-                    ->data('icon', $collection['icon'] ?? '');
+                $menu = $group->add($collection['label'], route('comma::posts.index', ['collection' => $key]))
+                    ->active('cms/posts/'.$key);
+                foreach ($collection['data'] as $dataKey => $dataValue) {
+                    $menu->data($dataKey, $dataValue);
+                }
             }
         }
     }

@@ -23,7 +23,10 @@ return [
     'collections' => [
         'default' => [
             'label' => 'All Posts',
-            'icon' => 'newspaper outline',
+            'data' => [
+                'icon' => 'newspaper outline',
+                // 'permission' => 'manage-all-posts',
+            ],
             'filters' => [
                 'type' => 'default',
             ],
