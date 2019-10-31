@@ -2,6 +2,7 @@
 
 namespace Laravolt\Comma\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Laravolt\Comma\Exceptions\CmsException;
@@ -10,6 +11,8 @@ use Laravolt\Comma\Http\Requests\UpdatePost;
 
 class PostController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(Request $request, string $collection)
     {
         $this->validateCollection($collection);
@@ -98,8 +101,12 @@ class PostController extends Controller
 
     protected function validateCollection(string $collection)
     {
-        if (!config()->has("laravolt.comma.collections.$collection")) {
+        $key = "laravolt.comma.collections.$collection";
+
+        if (!config()->has($key)) {
             abort(404);
         }
+
+        $this->authorize(config("laravolt.comma.collections.$collection.data.permission"));
     }
 }
