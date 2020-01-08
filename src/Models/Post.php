@@ -50,16 +50,7 @@ class Post extends Model implements HasMedia
     public function scopeSearch($query, $keyword)
     {
         if ($keyword) {
-            return $query->where(
-                function ($q) use ($keyword) {
-                    $q->where('title', 'like', "%$keyword%")
-                        ->orWhereHas(
-                            'author', function ($q2) use ($keyword) {
-                            $q2->where('name', 'like', "%$keyword%");
-                        }
-                        );
-                }
-            );
+            return $query->whereLike(['title', 'author.name'], $keyword);
         }
     }
 
